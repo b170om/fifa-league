@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = getSupabase()
   const { id } = await params
   const body = await req.json()
   const { mode, team_a_player_ids, team_b_player_ids, score_a, score_b, played_at } = body
@@ -27,6 +28,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = getSupabase()
   const { id } = await params
   const { error } = await supabase.from('matches').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
