@@ -1,39 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f9fafb;
-  --surface: #111827;
-  --surface2: #1f2937;
-  --border: #374151;
-  --green: #16a34a;
-  --green-light: #22c55e;
-  --muted: #9ca3af;
+  --paper:   #ece4d2;
+  --paper2:  #e5dcc6;
+  --paper3:  #e8e0cd;
+  --ink:     #1c1916;
+  --muted:   #6f6757;
+  --soft:    #9a9180;
+  --green:   #1f7a3d;
+  --orange:  #d9531e;
+  --cream:   #f1ead8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface2: var(--surface2);
-  --color-border: var(--border);
-  --color-green: var(--green);
-  --color-green-light: var(--green-light);
-  --color-muted: var(--muted);
+  --color-paper:   var(--paper);
+  --color-paper2:  var(--paper2);
+  --color-ink:     var(--ink);
+  --color-muted:   var(--muted);
+  --color-soft:    var(--soft);
+  --color-green:   var(--green);
+  --color-orange:  var(--orange);
+  --color-cream:   var(--cream);
 }
 
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+::-webkit-scrollbar { display: none; }
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-barlow), 'Barlow Condensed', sans-serif;
   min-height: 100dvh;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-/* scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+input, button { font-family: inherit; }

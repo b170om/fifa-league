@@ -1,13 +1,17 @@
+const map = {
+  W: { bg: '#1f7a3d', fg: '#f1ead8' },
+  D: { bg: '#e8e0cd', fg: '#1c1916' },
+  L: { bg: '#d9531e', fg: '#f6efdf' },
+}
+
 export default function FormBadge({ result }: { result: 'W' | 'D' | 'L' }) {
-  const cls =
-    result === 'W'
-      ? 'bg-green-600 text-white'
-      : result === 'D'
-        ? 'bg-gray-600 text-white'
-        : 'bg-red-600 text-white'
+  const { bg, fg } = map[result]
   return (
-    <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold ${cls}`}>
+    <div
+      className="w-[19px] h-[19px] flex items-center justify-center text-[12px] font-bold border border-[rgba(28,25,22,0.4)]"
+      style={{ background: bg, color: fg, fontFamily: 'var(--font-barlow)' }}
+    >
       {result}
-    </span>
+    </div>
   )
 }

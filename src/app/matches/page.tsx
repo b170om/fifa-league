@@ -2,86 +2,54 @@
 import { useEffect, useState } from 'react'
 import type { Match, Player } from '@/lib/database.types'
 import MatchForm from '@/components/MatchForm'
-import MatchCard from '@/components/MatchCard'
+import PageHeader from '@/components/PageHeader'
+import { useRouter } from 'next/navigation'
 
-export default function MatchesPage() {
+export default function NewMatchPage() {
   const [players, setPlayers] = useState<Player[]>([])
-  const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
-  const [showForm, setShowForm] = useState(false)
-  const [editing, setEditing] = useState<Match | null>(null)
+  const [toast, setToast] = useState('')
+  const router = useRouter()
 
-  async function load() {
-    const [p, m] = await Promise.all([
-      fetch('/api/players').then((r) => r.json()),
-      fetch('/api/matches').then((r) => r.json()),
-    ])
-    setPlayers(p)
-    setMatches(m)
-    setLoading(false)
-  }
+  useEffect(() => {
+    fetch('/api/players').then((r) => r.json()).then((p) => { setPlayers(p); setLoading(false) })
+  }, [])
 
-  useEffect(() => { load() }, [])
-
-  async function deleteMatch(id: string) {
-    if (!confirm('Delete this match?')) return
-    await fetch(`/api/matches/${id}`, { method: 'DELETE' })
-    await load()
+  function flash(msg: string) {
+    setToast(msg)
+    setTimeout(() => setToast(''), 1700)
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 mt-2">
-        <h1 className="text-xl font-bold text-green-400">Match History</h1>
-        {!showForm && !editing && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          >
-            + New Match
-          </button>
-        )}
-      </div>
-
-      {(showForm || editing) && (
-        <div className="mb-6">
+    <>
+      <PageHeader badge="Live" title="New Result" sub="File tonight's scoreline" />
+      <main className="flex-1 overflow-y-auto relative">
+        {loading ? (
+          <div className="px-[18px] pt-8 text-[14px] text-[#6f6757] italic" style={{ fontFamily: 'var(--font-spectral)' }}>
+            Loading squad…
+          </div>
+        ) : players.length < 2 ? (
+          <div className="px-[18px] pt-8">
+            <p className="text-[14px] italic text-[#6f6757]" style={{ fontFamily: 'var(--font-spectral)' }}>
+              You need at least 2 players. Head to Squad to register them.
+            </p>
+          </div>
+        ) : (
           <MatchForm
             players={players}
-            match={editing ?? undefined}
-            onSave={async () => {
-              setShowForm(false)
-              setEditing(null)
-              await load()
-            }}
-            onCancel={() => {
-              setShowForm(false)
-              setEditing(null)
-            }}
+            onSave={() => { flash('Result filed'); setTimeout(() => router.push('/history'), 400) }}
+            onCancel={() => router.push('/history')}
           />
-        </div>
-      )}
+        )}
 
-      {loading ? (
-        <div className="space-y-3 animate-pulse">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 bg-gray-900 rounded-xl" />
-          ))}
-        </div>
-      ) : matches.length === 0 ? (
-        <p className="text-gray-500 text-sm">No matches yet.</p>
-      ) : (
-        <div className="space-y-3">
-          {matches.map((m) => (
-            <MatchCard
-              key={m.id}
-              match={m}
-              players={players}
-              onEdit={() => setEditing(m)}
-              onDelete={() => deleteMatch(m.id)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+        {/* Toast */}
+        {toast && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 -rotate-[3.5deg] border-[2.5px] border-[#d9531e] text-[#d9531e] text-[15px] font-bold tracking-[.1em] uppercase px-[18px] py-[9px] whitespace-nowrap z-20 shadow-[3px_3px_0_rgba(28,25,22,0.9)]"
+            style={{ fontFamily: 'var(--font-barlow)', background: '#ece4d2' }}>
+            {toast}
+          </div>
+        )}
+      </main>
+    </>
   )
 }
