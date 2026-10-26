@@ -1,39 +1,53 @@
 import type { Metadata, Viewport } from 'next'
-import { Anton, Barlow_Condensed, Spectral } from 'next/font/google'
+import { Rubik, Teko } from 'next/font/google'
+import { LeagueProvider } from '@/components/league'
+import { Nav } from '@/components/nav'
 import './globals.css'
-import BottomNav from '@/components/BottomNav'
 
-const anton = Anton({ weight: '400', subsets: ['latin'], variable: '--font-anton' })
-const barlow = Barlow_Condensed({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin'],
-  variable: '--font-barlow',
+const rubik = Rubik({
+  subsets: ['hebrew', 'latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-rubik',
+  display: 'swap',
 })
-const spectral = Spectral({
-  weight: ['400', '500'],
-  style: ['normal', 'italic'],
+
+const teko = Teko({
   subsets: ['latin'],
-  variable: '--font-spectral',
+  weight: ['500', '600', '700'],
+  variable: '--font-teko',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Floodlight League',
-  description: 'Weekly FIFA league among friends',
+  title: 'פלאדלייט',
+  description: 'ליגת הפיפא של החבר׳ה. זוגות, הימור, ומי חייב למי בסוף הערב.',
+  applicationName: 'פלאדלייט',
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#06110c',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${anton.variable} ${barlow.variable} ${spectral.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-[#ece4d2] text-[#1c1916]">
-        <div className="flex-1 max-w-[430px] mx-auto w-full flex flex-col pb-[72px]">
-          {children}
+    <html lang="he" dir="rtl" className={`${rubik.variable} ${teko.variable}`}>
+      <body>
+        <div className="stadium">
+          <div className="beam" aria-hidden />
+          <svg className="markings" viewBox="0 0 400 800" preserveAspectRatio="xMidYMin slice" aria-hidden>
+            <rect x="48" y="120" width="304" height="460" fill="none" stroke="rgba(214,255,63,0.13)" strokeWidth="2" />
+            <line x1="48" y1="350" x2="352" y2="350" stroke="rgba(214,255,63,0.16)" strokeWidth="2" />
+            <circle cx="200" cy="350" r="62" fill="none" stroke="rgba(214,255,63,0.16)" strokeWidth="2" />
+            <circle cx="200" cy="350" r="4" fill="rgba(255,193,74,0.8)" />
+          </svg>
+          <LeagueProvider>
+            <div className="phone">{children}</div>
+            <Nav />
+          </LeagueProvider>
         </div>
-        <BottomNav />
       </body>
     </html>
   )

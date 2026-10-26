@@ -1,36 +1,29 @@
-import { NextResponse } from 'next/server'
-import { getSupabase } from '@/lib/supabase'
+import { DbError } from '@/lib/errors'
+import { fail, json, readJson } from '@/lib/http'
+import { softDeleteMatch, updateMatch } from '@/lib/league-store'
+import { isUuid, parseMatchInput } from '@/lib/validation'
 
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = getSupabase()
-  const { id } = await params
-  const body = await req.json()
-  const { mode, team_a_player_ids, team_b_player_ids, score_a, score_b, played_at } = body
+export const dynamic = 'force-dynamic'
 
-  if (mode && !['1v1', '2v2'].includes(mode))
-    return NextResponse.json({ error: 'Invalid mode' }, { status: 400 })
-
-  if (team_a_player_ids && team_b_player_ids) {
-    const allIds = [...team_a_player_ids, ...team_b_player_ids]
-    if (new Set(allIds).size !== allIds.length)
-      return NextResponse.json({ error: 'Duplicate player' }, { status: 400 })
-  }
-
-  const { data, error } = await supabase
-    .from('matches')
-    .update({ mode, team_a_player_ids, team_b_player_ids, score_a, score_b, played_at })
-    .eq('id', id)
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+function idOrThrow(id: string) {
+  if (!isUuid(id)) throw new DbError('משחק לא תקין', 400)
+  return id
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = getSupabase()
-  const { id } = await params
-  const { error } = await supabase.from('matches').delete().eq('id', id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return new NextResponse(null, { status: 204 })
+export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await ctx.params
+    return json(await updateMatch(idOrThrow(id), parseMatchInput(await readJson(req))))
+  } catch (error) {
+    return fail(error)
+  }
+}
+
+export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await ctx.params
+    return json(await softDeleteMatch(idOrThrow(id)))
+  } catch (error) {
+    return fail(error)
+  }
 }
