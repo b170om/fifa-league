@@ -83,7 +83,7 @@ export default function HomePage() {
                     <article key={match.id} className="card">
                       <div className="row">
                         <strong>{teamLabel(aWon ? match.teamA : match.teamB, data.players)}</strong>
-                        <span className="num" style={{ fontFamily: 'var(--font-teko)', fontSize: 28 }}>{match.scoreA}–{match.scoreB}</span>
+                        <span className="num" style={{ fontFamily: 'var(--font-teko)', fontSize: 28 }}>{aWon ? match.scoreA : match.scoreB}–{aWon ? match.scoreB : match.scoreA}</span>
                       </div>
                       <p className="dim" style={{ margin: 0 }}>נגד {teamLabel(aWon ? match.teamB : match.teamA, data.players)} · {formatDayTime(match.playedAt)}</p>
                     </article>

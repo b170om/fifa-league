@@ -188,7 +188,10 @@ test('night summary picks the profit leader and the real upset', () => {
   const text = fallbackRecap(facts)
   assert.match(text, /יובל/)
   assert.match(text, /4–1/)
+  assert.match(text, /יום א׳/)
   assert.doesNotMatch(text, /עידו/)
+  const repeated = fallbackRecap({ ...facts, title: 'ערב יום א׳', when: 'יום א׳' })
+  assert.equal(repeated.split('יום א׳').length - 1, 1)
 })
 
 test('match input rejects draws, duplicates, and bad stakes', () => {

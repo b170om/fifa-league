@@ -109,6 +109,7 @@ export interface RecapFacts {
   mvp: string | null
   upset: string | null
   transfers: string[]
+  stakeNote: string
 }
 
 export function recapFacts(opts: {
@@ -120,6 +121,11 @@ export function recapFacts(opts: {
   summary: NightSummary
 }): RecapFacts {
   const { title, when, stake, matches, players, summary } = opts
+  const played = activeMatches(matches)
+  const stakes = [...new Set(played.map((match) => match.stake))]
+  const stakeNote = stakes.length <= 1
+    ? `₪${stakes[0] ?? stake} על כל שחקן בכל משחק`
+    : `הימור הערב ₪${stake}, ובחלק מהמשחקים ${stakes.filter((amount) => amount !== stake).map((amount) => `₪${amount}`).join(' ו')}`
   return {
     title,
     when,
@@ -150,12 +156,14 @@ export function recapFacts(opts: {
     transfers: summary.transfers.map(
       (t) => `${playerName(players, t.fromId)} מעביר ${shekel(t.amount)} ל${playerName(players, t.toId)}`,
     ),
+    stakeNote,
   }
 }
 
 export function fallbackRecap(facts: RecapFacts): string {
   const bits: string[] = []
-  bits.push(`${facts.title}, ${facts.when}. ${facts.matchCount} משחקים, ₪${facts.stake} על כל שחקן בכל משחק.`)
+  const heading = facts.title.includes(facts.when) ? facts.title : `${facts.title}, ${facts.when}`
+  bits.push(`${heading}. ${facts.matchCount} משחקים, ${facts.stakeNote}.`)
   if (facts.mvp) bits.push(`המצטיין: ${facts.mvp}.`)
   const blowout = facts.matches.slice().sort((a, b) => {
     const gap = (score: string) => {

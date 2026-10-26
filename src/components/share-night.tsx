@@ -83,7 +83,7 @@ export function ShareNight({ session, matches, players, summary }: { session: Se
         <article ref={ref} className="share-card">
           <p style={{ margin: 0, letterSpacing: '0.16em', color: '#ffc14a', fontWeight: 800, fontSize: 18 }}>FLOODLIGHT</p>
           <h2 style={{ margin: '8px 0 0', fontSize: 54, lineHeight: 0.95 }}>{session.title}</h2>
-          <p style={{ margin: '8px 0 20px', color: '#b7cbb4' }}>{formatDay(session.startedAt)} · {shekel(session.stake)} למשחק</p>
+          <p style={{ margin: '8px 0 20px', color: '#b7cbb4' }}>{formatDay(session.startedAt)} · הימור הערב {shekel(session.stake)}</p>
           {shown.map((match) => {
             const aWon = match.scoreA > match.scoreB
             return (

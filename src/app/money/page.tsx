@@ -43,7 +43,7 @@ function Ledger({ data }: { data: import('@/lib/types').LeagueData }) {
           {nights.map((night) => <option key={night.id} value={night.id}>{night.title}</option>)}
         </select>
       </label>
-      <p className="muted">כל מנצח ב־{shekel(session?.stake ?? data.settings.defaultStake)} למשחק, כל מפסיד באותו סכום. ההעברות כאן מאפסות את החוב במספר הצעדים הקטן ביותר.</p>
+      <p className="muted">{session ? `הימור הערב ${shekel(session.stake)} לשחקן, אלא אם משחק נרשם בסכום אחר.` : 'כל מנצח מקבל את הימור המשחק, וכל מפסיד משלם אותו סכום.'} ההעברות כאן מאפסות את החוב במספר הצעדים הקטן ביותר.</p>
       <section className="card bars">
         {summary.standings.map((row) => (
           <div key={row.playerId}>

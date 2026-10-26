@@ -259,7 +259,7 @@ function Desk({ data, session }: { data: LeagueData; session: Session }) {
         <article key={match.id} className="card">
           <div className="row">
             <strong>{teamLabel(match.scoreA > match.scoreB ? match.teamA : match.teamB, data.players)}</strong>
-            <span className="num" style={{ fontFamily: 'var(--font-teko)', fontSize: 28 }}>{match.scoreA}–{match.scoreB}</span>
+            <span className="num" style={{ fontFamily: 'var(--font-teko)', fontSize: 28 }}>{Math.max(match.scoreA, match.scoreB)}–{Math.min(match.scoreA, match.scoreB)}</span>
           </div>
           <p className="dim" style={{ margin: '4px 0 0' }}>
             נגד {teamLabel(match.scoreA > match.scoreB ? match.teamB : match.teamA, data.players)} · {shekel(match.stake)} · {formatTime(match.playedAt)}
