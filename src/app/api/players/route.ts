@@ -1,25 +1,16 @@
-import { NextResponse } from 'next/server'
-import { getSupabase } from '@/lib/supabase'
+import { fail, json, readJson } from '@/lib/http'
+import { createPlayer } from '@/lib/league-store'
+import { cleanName } from '@/lib/validation'
 
-export async function GET() {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .order('created_at', { ascending: true })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
-}
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
-  const supabase = getSupabase()
-  const { name } = await req.json()
-  if (!name?.trim()) return NextResponse.json({ error: 'Name required' }, { status: 400 })
-  const { data, error } = await supabase
-    .from('players')
-    .insert({ name: name.trim() })
-    .select()
-    .single()
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data, { status: 201 })
+  try {
+    const body = await readJson(req)
+    if (!body || typeof body !== 'object') throw new Error('הבקשה לא תקינה')
+    const name = cleanName((body as { name?: unknown }).name)
+    return json(await createPlayer(name), 201)
+  } catch (error) {
+    return fail(error)
+  }
 }
